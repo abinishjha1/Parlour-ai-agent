@@ -54,6 +54,21 @@ export default function MarketplaceHome() {
 
   return (
     <div className="min-h-screen bg-neutral-950 text-neutral-50 selection:bg-indigo-500/30">
+      {/* Navigation */}
+      <nav className="absolute top-0 w-full z-50 px-4 sm:px-6 lg:px-8 py-6 flex justify-between items-center max-w-7xl mx-auto left-0 right-0">
+        <div className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-neutral-400">SalonFlow AI</div>
+        <div className="flex gap-4 items-center">
+          <Link href="/dashboard" className="text-sm font-medium text-neutral-300 hover:text-white transition-colors">
+            Sign In
+          </Link>
+          <Link href="/onboarding">
+            <Button className="bg-indigo-600 hover:bg-indigo-500 text-white rounded-full px-6">
+              Register Salon
+            </Button>
+          </Link>
+        </div>
+      </nav>
+
       {/* Hero Section */}
       <div className="relative overflow-hidden pt-32 pb-20 lg:pt-48 lg:pb-32">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[500px] bg-indigo-500/20 blur-[120px] rounded-full pointer-events-none" />
