@@ -1,7 +1,17 @@
 import { UserButton } from "@clerk/nextjs";
 import Link from "next/link";
-import { Calendar, Users, Scissors, Store, Home, Menu } from "lucide-react";
+import { Calendar, Users, Scissors, Store, Home, BarChart3, UserCircle, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
+
+const navLinks = [
+  { href: "/dashboard", label: "Dashboard", icon: Home },
+  { href: "/dashboard/appointments", label: "Appointments", icon: Calendar },
+  { href: "/dashboard/customers", label: "Customers", icon: UserCircle },
+  { href: "/dashboard/staff", label: "Staff", icon: Users },
+  { href: "/dashboard/services", label: "Services", icon: Scissors },
+  { href: "/dashboard/reports", label: "Reports", icon: BarChart3 },
+  { href: "/dashboard/settings", label: "Settings", icon: Store },
+];
 
 export default function DashboardLayout({
   children,
@@ -17,27 +27,17 @@ export default function DashboardLayout({
             SalonFlow AI
           </h1>
         </div>
-        <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
-          <Link href="/dashboard" className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-gray-100 text-gray-700">
-            <Home className="w-5 h-5" />
-            Dashboard
-          </Link>
-          <Link href="/dashboard/appointments" className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-gray-100 text-gray-700">
-            <Calendar className="w-5 h-5" />
-            Appointments
-          </Link>
-          <Link href="/dashboard/staff" className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-gray-100 text-gray-700">
-            <Users className="w-5 h-5" />
-            Staff
-          </Link>
-          <Link href="/dashboard/services" className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-gray-100 text-gray-700">
-            <Scissors className="w-5 h-5" />
-            Services
-          </Link>
-          <Link href="/dashboard/settings" className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-gray-100 text-gray-700">
-            <Store className="w-5 h-5" />
-            Salon Settings
-          </Link>
+        <nav className="flex-1 px-4 py-6 space-y-1 overflow-y-auto">
+          {navLinks.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-gray-100 text-gray-700 text-sm"
+            >
+              <link.icon className="w-5 h-5" />
+              {link.label}
+            </Link>
+          ))}
         </nav>
         <div className="p-4 border-t flex items-center gap-3">
           <UserButton afterSignOutUrl="/" />

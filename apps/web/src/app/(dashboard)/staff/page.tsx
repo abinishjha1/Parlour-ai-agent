@@ -1,29 +1,19 @@
+import { getCurrentSalon } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import { Plus, Trash2 } from "lucide-react";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
+  Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
 import { getStaff, deleteStaff, createStaff } from "./actions";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
+  Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-const TEMP_SALON_ID = "cm0x2a3b4000008l9k1j2h3g4"; 
-
 export default async function StaffPage() {
-  const staffMembers = await getStaff(TEMP_SALON_ID);
+  const { salonId } = await getCurrentSalon();
+  const staffMembers = await getStaff(salonId);
 
   return (
     <div className="space-y-6">
@@ -32,7 +22,7 @@ export default async function StaffPage() {
           <h2 className="text-3xl font-bold tracking-tight">Staff</h2>
           <p className="text-muted-foreground">Manage your salon staff and team members.</p>
         </div>
-        
+
         <Dialog>
           <DialogTrigger asChild>
             <Button>
@@ -45,8 +35,8 @@ export default async function StaffPage() {
               <DialogDescription>Add a new team member to your salon.</DialogDescription>
             </DialogHeader>
             <form action={async (formData) => {
-              "use server"
-              await createStaff(TEMP_SALON_ID, formData);
+              "use server";
+              await createStaff(salonId, formData);
             }} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="name">Full Name</Label>
@@ -54,7 +44,7 @@ export default async function StaffPage() {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="phone">Phone Number</Label>
-                <Input id="phone" name="phone" placeholder="(555) 123-4567" />
+                <Input id="phone" name="phone" placeholder="9876543210" />
               </div>
               <Button type="submit" className="w-full">Save Staff Member</Button>
             </form>

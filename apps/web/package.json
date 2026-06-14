@@ -10,8 +10,10 @@
   },
   "dependencies": {
     "@ai-sdk/openai": "^3.0.71",
+    "@ai-sdk/react": "^3.0.207",
     "@base-ui/react": "^1.5.0",
     "@clerk/nextjs": "^7.5.2",
+    "@clerk/ui": "^1.16.1",
     "@prisma/client": "^6.19.3",
     "@upstash/qstash": "^2.11.0",
     "@upstash/redis": "^1.38.0",

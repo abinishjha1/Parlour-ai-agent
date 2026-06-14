@@ -23,7 +23,7 @@ export async function POST(req: Request) {
       
       // Find salon by razorpaySubscriptionId and update status
       await db.subscription.updateMany({
-        where: { razorpaySubscriptionId: subscriptionId },
+        where: { razorpayId: subscriptionId },
         data: { 
           status: "ACTIVE",
           currentPeriodEnd: new Date(event.payload.subscription.entity.current_end * 1000)

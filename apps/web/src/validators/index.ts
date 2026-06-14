@@ -13,6 +13,7 @@ export const serviceSchema = z.object({
   description: z.string().optional(),
   price: z.number().positive("Price must be positive"),
   duration: z.number().int().positive("Duration must be a positive integer (minutes)"),
+  categoryId: z.string().optional(),
 });
 
 export const staffSchema = z.object({

@@ -55,6 +55,11 @@ model Salon {
   businessHours BusinessHour[]
   holidays      Holiday[]
   subscription  Subscription?
+  notifications Notification[]
+  auditLogs     AuditLog[]
+  payments      Payment[]
+
+  @@index([latitude, longitude])
 }
 
 model Staff {
@@ -124,12 +129,15 @@ model Appointment {
   createdAt  DateTime          @default(now())
   updatedAt  DateTime          @updatedAt
 
-  salon    Salon    @relation(fields: [salonId], references: [id])
-  customer Customer @relation(fields: [customerId], references: [id])
-  staff    Staff    @relation(fields: [staffId], references: [id])
-  service  Service  @relation(fields: [serviceId], references: [id])
+  salon         Salon          @relation(fields: [salonId], references: [id])
+  customer      Customer       @relation(fields: [customerId], references: [id])
+  staff         Staff          @relation(fields: [staffId], references: [id])
+  service       Service        @relation(fields: [serviceId], references: [id])
+  notifications Notification[]
+  payment       Payment?
 
   @@index([salonId, startTime, endTime])
+  @@index([staffId, startTime, endTime])
 }
 
 enum AppointmentStatus {
@@ -196,4 +204,59 @@ enum PlanTier {
   FREE
   STARTER
   PRO
+}
+
+// ──────────────────────────────────────────────
+// NEW TABLES
+// ──────────────────────────────────────────────
+
+model Notification {
+  id            String   @id @default(uuid())
+  salonId       String
+  type          String   // CONFIRMATION, CANCELLATION, RESCHEDULE, REMINDER
+  channel       String   @default("EMAIL") // EMAIL, SMS
+  recipient     String   // email or phone
+  subject       String?
+  body          String?
+  status        String   @default("PENDING") // PENDING, SENT, FAILED
+  appointmentId String?
+  createdAt     DateTime @default(now())
+
+  salon       Salon        @relation(fields: [salonId], references: [id])
+  appointment Appointment? @relation(fields: [appointmentId], references: [id])
+
+  @@index([salonId, createdAt])
+}
+
+model AuditLog {
+  id        String   @id @default(uuid())
+  salonId   String
+  userId    String?
+  action    String   // CREATE, UPDATE, DELETE, LOGIN, CANCEL, RESCHEDULE
+  entity    String   // APPOINTMENT, SERVICE, STAFF, CUSTOMER, SALON
+  entityId  String?
+  metadata  Json?
+  ipAddress String?
+  createdAt DateTime @default(now())
+
+  salon Salon @relation(fields: [salonId], references: [id])
+
+  @@index([salonId, createdAt])
+}
+
+model Payment {
+  id                String   @id @default(uuid())
+  salonId           String
+  appointmentId     String?  @unique
+  amount            Float
+  method            String?  // CASH, CARD, UPI, RAZORPAY
+  status            String   @default("PENDING") // PENDING, COMPLETED, REFUNDED
+  razorpayPaymentId String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  salon       Salon        @relation(fields: [salonId], references: [id])
+  appointment Appointment? @relation(fields: [appointmentId], references: [id])
+
+  @@index([salonId, createdAt])
 }

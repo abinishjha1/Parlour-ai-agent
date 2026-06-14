@@ -1,5 +1,6 @@
 import { AppointmentRepository } from "../repositories/AppointmentRepository";
 import { db } from "@/lib/db";
+import { Prisma } from "@prisma/client";
 import { addMinutes, isBefore, isAfter, parse, format, startOfDay } from "date-fns";
 
 export class AppointmentService {
@@ -19,19 +20,29 @@ export class AppointmentService {
       db.staffHour.findUnique({ where: { staffId_dayOfWeek: { staffId, dayOfWeek } } }),
     ]);
 
-    if (!businessHour || businessHour.isClosed || !staffHour || staffHour.isOff) {
-      return []; // Salon or staff is closed/off today
+    if (!businessHour || businessHour.isClosed) {
+      return []; // Salon is closed today
+    }
+
+    // If no staff hours are set, fall back to business hours
+    if (staffHour && staffHour.isOff) {
+      return []; // Staff is off today
     }
 
     // Determine actual open and close times for the staff (intersection of business and staff hours)
     const dateStr = format(date, "yyyy-MM-dd");
     const bizOpen = parse(`${dateStr} ${businessHour.openTime}`, "yyyy-MM-dd HH:mm", new Date());
     const bizClose = parse(`${dateStr} ${businessHour.closeTime}`, "yyyy-MM-dd HH:mm", new Date());
-    const stfOpen = parse(`${dateStr} ${staffHour.openTime}`, "yyyy-MM-dd HH:mm", new Date());
-    const stfClose = parse(`${dateStr} ${staffHour.closeTime}`, "yyyy-MM-dd HH:mm", new Date());
 
-    const actualOpen = isAfter(stfOpen, bizOpen) ? stfOpen : bizOpen;
-    const actualClose = isBefore(stfClose, bizClose) ? stfClose : bizClose;
+    let actualOpen = bizOpen;
+    let actualClose = bizClose;
+
+    if (staffHour) {
+      const stfOpen = parse(`${dateStr} ${staffHour.openTime}`, "yyyy-MM-dd HH:mm", new Date());
+      const stfClose = parse(`${dateStr} ${staffHour.closeTime}`, "yyyy-MM-dd HH:mm", new Date());
+      actualOpen = isAfter(stfOpen, bizOpen) ? stfOpen : bizOpen;
+      actualClose = isBefore(stfClose, bizClose) ? stfClose : bizClose;
+    }
 
     if (isBefore(actualClose, actualOpen)) return []; // Invalid hours
 
