@@ -24,11 +24,11 @@ export default async function StaffPage() {
         </div>
 
         <Dialog>
-          <DialogTrigger asChild>
+          <DialogTrigger render={
             <Button>
-              <Plus className="mr-2 h-4 w-4" /> Add Staff
+              <Plus className="mr-2 h-4 w-4" /> Add Staff Member
             </Button>
-          </DialogTrigger>
+          } />
           <DialogContent>
             <DialogHeader>
               <DialogTitle>Add New Staff</DialogTitle>

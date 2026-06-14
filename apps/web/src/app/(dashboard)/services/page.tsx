@@ -25,11 +25,11 @@ export default async function ServicesPage() {
         </div>
 
         <Dialog>
-          <DialogTrigger asChild>
+          <DialogTrigger render={
             <Button>
               <Plus className="mr-2 h-4 w-4" /> Add Service
             </Button>
-          </DialogTrigger>
+          } />
           <DialogContent>
             <DialogHeader>
               <DialogTitle>Add New Service</DialogTitle>
