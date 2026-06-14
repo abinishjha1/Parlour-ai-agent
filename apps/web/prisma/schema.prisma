@@ -1,0 +1,199 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  clerkId   String   @unique
+  email     String   @unique
+  firstName String?
+  lastName  String?
+  role      Role     @default(STAFF)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  salonId String?
+  salon   Salon?  @relation(fields: [salonId], references: [id])
+}
+
+enum Role {
+  SUPER_ADMIN
+  SALON_OWNER
+  MANAGER
+  STAFF
+}
+
+model Salon {
+  id        String    @id @default(uuid())
+  slug      String    @unique
+  name      String
+  logoUrl   String?
+  address   String?
+  city      String?
+  state     String?
+  zipCode   String?
+  latitude  Float?
+  longitude Float?
+  isListed  Boolean   @default(true)
+  phone     String?
+  timezone  String    @default("UTC")
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  users         User[]
+  staff         Staff[]
+  services      Service[]
+  customers     Customer[]
+  appointments  Appointment[]
+  businessHours BusinessHour[]
+  holidays      Holiday[]
+  subscription  Subscription?
+}
+
+model Staff {
+  id        String    @id @default(uuid())
+  salonId   String
+  userId    String?   @unique
+  name      String
+  phone     String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  salon        Salon         @relation(fields: [salonId], references: [id])
+  services     Service[]     @relation("StaffServices")
+  appointments Appointment[]
+  workingHours StaffHour[]
+  holidays     Holiday[]
+}
+
+model Service {
+  id          String    @id @default(uuid())
+  salonId     String
+  name        String
+  description String?
+  price       Float
+  duration    Int // Duration in minutes
+  categoryId  String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+
+  salon        Salon         @relation(fields: [salonId], references: [id])
+  staff        Staff[]       @relation("StaffServices")
+  appointments Appointment[]
+}
+
+model Customer {
+  id         String    @id @default(uuid())
+  salonId    String
+  firstName  String
+  lastName   String?
+  email      String?
+  phone      String
+  notes      String?
+  totalSpend Float     @default(0)
+  lastVisit  DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  salon        Salon         @relation(fields: [salonId], references: [id])
+  appointments Appointment[]
+
+  @@unique([salonId, phone])
+}
+
+model Appointment {
+  id         String            @id @default(uuid())
+  salonId    String
+  customerId String
+  staffId    String
+  serviceId  String
+  startTime  DateTime
+  endTime    DateTime
+  status     AppointmentStatus @default(PENDING)
+  totalPrice Float
+  notes      String?
+  createdAt  DateTime          @default(now())
+  updatedAt  DateTime          @updatedAt
+
+  salon    Salon    @relation(fields: [salonId], references: [id])
+  customer Customer @relation(fields: [customerId], references: [id])
+  staff    Staff    @relation(fields: [staffId], references: [id])
+  service  Service  @relation(fields: [serviceId], references: [id])
+
+  @@index([salonId, startTime, endTime])
+}
+
+enum AppointmentStatus {
+  PENDING
+  CONFIRMED
+  COMPLETED
+  CANCELLED
+  NO_SHOW
+}
+
+model BusinessHour {
+  id        String  @id @default(uuid())
+  salonId   String
+  dayOfWeek Int // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+  openTime  String // "09:00"
+  closeTime String // "17:00"
+  isClosed  Boolean @default(false)
+
+  salon Salon @relation(fields: [salonId], references: [id])
+
+  @@unique([salonId, dayOfWeek])
+}
+
+model StaffHour {
+  id        String  @id @default(uuid())
+  staffId   String
+  dayOfWeek Int // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+  openTime  String // "09:00"
+  closeTime String // "17:00"
+  isOff     Boolean @default(false)
+
+  staff Staff @relation(fields: [staffId], references: [id])
+
+  @@unique([staffId, dayOfWeek])
+}
+
+model Holiday {
+  id      String   @id @default(uuid())
+  salonId String
+  staffId String? // If null, it's a salon-wide holiday
+  date    DateTime @db.Date
+  reason  String?
+
+  salon Salon  @relation(fields: [salonId], references: [id])
+  staff Staff? @relation(fields: [staffId], references: [id])
+
+  @@unique([salonId, staffId, date])
+}
+
+model Subscription {
+  id               String    @id @default(uuid())
+  salonId          String    @unique
+  plan             PlanTier  @default(FREE)
+  razorpayId       String?   @unique
+  status           String    @default("active")
+  currentPeriodEnd DateTime?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  salon Salon @relation(fields: [salonId], references: [id])
+}
+
+enum PlanTier {
+  FREE
+  STARTER
+  PRO
+}
