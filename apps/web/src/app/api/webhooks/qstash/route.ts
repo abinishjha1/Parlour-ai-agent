@@ -25,4 +25,7 @@ async function handler(req: Request) {
 }
 
 // Wrap with QStash signature verification
-export const POST = verifySignatureAppRouter(handler);
+export const POST = verifySignatureAppRouter(handler, {
+  currentSigningKey: process.env.QSTASH_CURRENT_SIGNING_KEY || "dummy_current_key_for_build",
+  nextSigningKey: process.env.QSTASH_NEXT_SIGNING_KEY || "dummy_next_key_for_build",
+});

@@ -40,7 +40,7 @@ export default function DashboardLayout({
           ))}
         </nav>
         <div className="p-4 border-t flex items-center gap-3">
-          <UserButton afterSignOutUrl="/" />
+          <UserButton />
           <span className="text-sm font-medium">My Account</span>
         </div>
       </aside>
@@ -55,7 +55,7 @@ export default function DashboardLayout({
             </Button>
             <h1 className="font-bold">SalonFlow AI</h1>
           </div>
-          <UserButton afterSignOutUrl="/" />
+          <UserButton />
         </header>
 
         <div className="flex-1 overflow-auto p-4 md:p-8">

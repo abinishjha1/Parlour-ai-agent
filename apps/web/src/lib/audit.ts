@@ -23,7 +23,7 @@ export async function logAudit(params: {
         action: params.action,
         entity: params.entity,
         entityId: params.entityId,
-        metadata: params.metadata || {},
+        metadata: (params.metadata || {}) as any,
         ipAddress: params.ipAddress,
       },
     });

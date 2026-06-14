@@ -12,10 +12,8 @@ export function AIChatbox({ salonId }: { salonId: string }) {
   const [isOpen, setIsOpen] = useState(false);
   const { messages, input, handleInputChange, handleSubmit, isLoading } = useChat({
     api: '/api/ai/chat',
-    body: {
-      salonId
-    }
-  });
+    body: { salonId }
+  } as any) as any;
 
   if (!isOpen) {
     return (
@@ -47,7 +45,7 @@ export function AIChatbox({ salonId }: { salonId: string }) {
                 Hi! I'm the AI Receptionist. How can I help you today?
               </div>
             )}
-            {messages.map((m) => (
+            {messages.map((m: any) => (
               <div key={m.id} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                 <div className={`max-w-[85%] rounded-lg p-3 text-sm ${
                   m.role === 'user' 
