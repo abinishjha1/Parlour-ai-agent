@@ -8,6 +8,13 @@ import { format } from 'date-fns';
 export const maxDuration = 30;
 
 export async function POST(req: Request) {
+  if (!process.env.OPENAI_API_KEY) {
+    return new Response(
+      JSON.stringify({ error: "AI Receptionist is not configured yet. Please add an OPENAI_API_KEY to your environment variables." }),
+      { status: 503, headers: { "Content-Type": "application/json" } }
+    );
+  }
+
   const { messages, salonId } = await req.json();
 
   if (!salonId) {

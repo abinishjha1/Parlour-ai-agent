@@ -58,10 +58,10 @@ export default function MarketplaceHome() {
       <nav className="absolute top-0 w-full z-50 px-4 sm:px-6 lg:px-8 py-6 flex justify-between items-center max-w-7xl mx-auto left-0 right-0">
         <div className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-neutral-400">SalonFlow AI</div>
         <div className="flex gap-4 items-center">
-          <Link href="/dashboard" className="text-sm font-medium text-neutral-300 hover:text-white transition-colors">
+          <Link href="/sign-in" className="text-sm font-medium text-neutral-300 hover:text-white transition-colors">
             Sign In
           </Link>
-          <Link href="/onboarding">
+          <Link href="/sign-up">
             <Button className="bg-indigo-600 hover:bg-indigo-500 text-white rounded-full px-6">
               Register Salon
             </Button>
